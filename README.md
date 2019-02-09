@@ -31,13 +31,13 @@ E-Sports with AI
 
 Team: Jan - May 2019
 
-| Name             | Email                  | Role          |
-| ---------------- | ---------------------- | ------------- |
-| Eduardo Ancira   | eanciras@gmail.com     | Development   |
-| Rolando Ruiz     | rolandoruge@gmail.com  | Product Owner |
-| Diego Cantu      | prueba@prueba.com      | Development   |
-| Hector Hernandez | hectorhm1596@gmail.com | Srumm master  |
-| Rodrigo          | prueba@prueba.com      | Development   |
+| Name             | Email                  | Role                  |
+| ---------------- | ---------------------- | ----------------------|
+| Eduardo Ancira   | eanciras@gmail.com     | Development           |
+| Rolando Ruiz     | rolandoruge@gmail.com  | (Proxy) Product Owner |
+| Diego Cantu      | prueba@prueba.com      | Development           |
+| Hector Hernandez | hectorhm1596@gmail.com | Srumm master          |
+| Rodrigo          | prueba@prueba.com      | Development           |
 
 ### Management tools
 
