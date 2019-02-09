@@ -1,4 +1,4 @@
-# Nombre del proyecto
+# Project Name
 
 E-Sports con AI
 
@@ -27,9 +27,9 @@ E-Sports con AI
 * **Production** - [TBD](TBD)
 * **Development** - [TBD](TBD)
 
-### Equipo de trabajo
+### Development Team
 
-Equipo: Enero - Mayo 2019
+Team: Jan - May 2019
 
 | Name             | Email                  | Role          |
 | ---------------- | ---------------------- | ------------- |
