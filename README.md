@@ -1,12 +1,12 @@
 # Project Name
 
-E-Sports con AI
+E-Sports with AI
 
 ## Table of contents
 
 * [Client Details](#client-details)
 * [Environment URLS](#environment-urls)
-* [Equipo de trabajo](#equipo-de-trabajo)
+* [Development Team](#development-team)
 * [Management resources](#management-resources)
 * [Setup the project](#setup-the-project)
 * [Stop the project](#stop-the-project)
