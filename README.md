@@ -37,7 +37,7 @@ Team: Jan - May 2019
 | Rolando Ruiz     | rolandoruge@gmail.com  | (Proxy) Product Owner |
 | Diego Cantu      | d.cantu.mar@gmail.com  | Development           |
 | Hector Hernandez | hectorhm1596@gmail.com | Srumm master          |
-| Rodrigo          | prueba@prueba.com      | Development           |
+| J.M.Rodriguez    | jmr_calvo@outlook.com  | Development           |
 
 ### Management tools
 
