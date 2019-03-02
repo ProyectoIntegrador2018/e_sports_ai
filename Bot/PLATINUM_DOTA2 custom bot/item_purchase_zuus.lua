@@ -55,7 +55,7 @@ local function LevelUp()
 	end
 	
 	local ability=npcBot:GetAbilityByName(Talents[1]);
-	
+	--if we have an ability and that ability is not max level upgrade it
 	if (ability~=nil and ability:CanAbilityBeUpgraded() and ability:GetLevel()<ability:GetMaxLevel()) then
 		npcBot:Action_LevelAbility(Talents[1]);
 		table.remove( Talents, 1 );
@@ -64,15 +64,16 @@ end
 
 function ItemPurchaseThink()
 	local npcBot = GetBot();
-	
+	--if we can use ability points then level skills
 	if npcBot:GetAbilityPoints()>0 then
 		LevelUp();
 	end
-	
+	--if we can buy item aether lens from the shop then prepara the gold 
 	if Utility.IsItemAvailable("item_aether_lens")~=nil then
 		npcBot.SecretGold=2300;
 	end
-
+	--if we dont have any more items pending to be ought
+	--if we dont need any specific item to buy then we change the bot atribute so it dont buy more items 
 	if ( npcBot.ItemsToBuy==nil or #npcBot.ItemsToBuy == 0 ) then
 		npcBot:SetNextItemPurchaseValue( 0 );
 		return;
@@ -80,11 +81,16 @@ function ItemPurchaseThink()
 
 	local NextItem = npcBot.ItemsToBuy[1];
 
+	--we get the next item to buy
 	npcBot:SetNextItemPurchaseValue( GetItemCost( NextItem ) );
 
+	--if the item we need isn´t bought from the shops outside base
 	if (not IsItemPurchasedFromSecretShop( NextItem)) and (not(IsItemPurchasedFromSideShop(NextItem) and npcBot:DistanceFromSideShop()<=2200)) then
+		--if we have the required gold to buy the item
 		if ( npcBot:GetGold() >= GetItemCost( NextItem ) ) then
+			--purchase the item
 			npcBot:Action_PurchaseItem( NextItem );
+			--we update the table of items we need to buy
 			table.remove( npcBot.ItemsToBuy, 1 );
 		end
 	end

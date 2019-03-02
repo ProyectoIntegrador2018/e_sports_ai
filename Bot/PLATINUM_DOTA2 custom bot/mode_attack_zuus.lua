@@ -33,10 +33,11 @@ local function UseW()
 	local npcBot = GetBot();
 	
 	local ability=npcBot:GetAbilityByName(Abilities[2]);
+	--if we don´t have the ability or cannot cast it stop 
 	if ability==nil or (not ability:IsFullyCastable()) then
 		return false;
 	end
-	
+	--if the enemy is in range of the skill cast it
 	if GetUnitToUnitDistance(npcBot.Target,npcBot)<ability:GetCastRange() then
 		npcBot:Action_UseAbilityOnEntity(ability,npcBot.Target);
 		return true;
@@ -49,10 +50,12 @@ local function UseQ()
 	local npcBot = GetBot();
 	
 	local ability=npcBot:GetAbilityByName(Abilities[1]);
+	--if we don´t have the ability or cannot cast it stop 
 	if ability==nil or (not ability:IsFullyCastable()) then
 		return false;
 	end
-	
+
+	--if the enemy is in range of the skill cast it
 	if GetUnitToUnitDistance(npcBot.Target,npcBot)<ability:GetCastRange() then
 		npcBot:Action_UseAbilityOnEntity(ability,npcBot.Target);
 		return true;
@@ -66,14 +69,17 @@ function Think()
 	
 	local npcBot=GetBot();
 	
+	--if the bot is usng a skill or channeling stop
 	if npcBot:IsUsingAbility() or npcBot:IsChanneling() then
 		return;
 	end
 	
+	--if the bot is attacking or dont have a target
 	if not npcBot.IsAttacking or npcBot.Target==nil then
 		return;
 	end
 	
+	--if the bot isn´t using abilities attack something
 	if (not UseW()) and (not UseQ()) then
 		npcBot:Action_AttackUnit(npcBot.Target,true);
 	end

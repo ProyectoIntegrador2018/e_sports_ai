@@ -29,7 +29,7 @@ local IsCore=true;
 
 local DamageThreshold=1.0;
 local MoveThreshold=1.0;
-
+--setup functions
 function OnStart()
 	mode_generic_laning.OnStart();
 	if DotaTime()>2 then
@@ -40,23 +40,25 @@ end
 function OnEnd()
 	mode_generic_laning.OnEnd();
 end
-
+--function to prioritize objectives
 function GetDesire()
 	return mode_generic_laning.GetDesire();
 end
 
-
+--function to retreat to a safer area
 function GetBack()
 	local npcBot=GetBot();
 	
 	local Enemies=npcBot:GetNearbyHeroes(1200,true,BOT_MODE_NONE);
 	
+	--if there any enemies the bot should retreat
 	if Enemies== nil or #Enemies==0 then
 		return true;
 	end
-	
+	--if the bot cannot cast skills or if there too much enemies or if the bot is faster
 	if npcBot:IsSilenced() or #Enemies>3 or npcBot:GetCurrentMovementSpeed()<250 then
 		backTimer=DotaTime();
+		--retreat to a certain position
 		npcBot:Action_MoveToLocation(GetLocationAlongLane(CurLane,LanePos-0.02));
 		return false;
 	end
@@ -81,21 +83,24 @@ local function Updates()
 	local npcBot=GetBot();
 
 	if DotaTime()<100 then
+		--get the path assigned to bot
 		CurLane=npcBot:GetAssignedLane();
 	end
 
 	local Enemies=npcBot:GetNearbyHeroes(1200,true,BOT_MODE_NONE);
 	
+	--if the bot is in the half of the lane and can advance to other lanes through the center path change lane
 	if CurLane~=nil and GetUnitToLocationDistance(npcBot,GetLocationAlongLane(CurLane,0.0)) < 1000 then
 		CurLane=Utility.ConsiderChangingLane(CurLane);
 	end
 	
 	LanePos = Utility.PositionAlongLane(CurLane);
 	
-
+	--if the bot has the item veil of discord should advance to attack the ancient
 	if Utility.IsItemInInventory("item_veil_of_discord")~=nil then
 		ShouldPush=true;
 	else
+		--if there many enemies in the lane push
 		if Enemies~=nil and #Enemies>1 then
 			ShouldPush=true;
 		else
@@ -105,6 +110,7 @@ local function Updates()
 	
 	local Towers=npcBot:GetNearbyTowers(1000,true);
 	
+	--depending on the numbers of enemies how close should the bot stay to its creeps
 	if (Enemies~=nil and #Enemies>1) or (Towers~=nil and #Towers>0) or ShouldPush then
 		npcBot.CreepDist=675;
 	else
