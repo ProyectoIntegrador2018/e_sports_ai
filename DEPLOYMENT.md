@@ -8,7 +8,7 @@ If you start a practice match with bots, it should read bot scripts from that lo
 ## Start a Bot vs. Bot Match
 Enable Dota 2 console by adding -console launching options.
 
-For bot vs. bot match to work, the example script need to be modified. Open hero_selection.lua and you can see the script tries to select 0-4 for radiant and 5-9 for dire. However, this is only true if you are in the game. For bot vs. bot match, 0-1 is reserved (maybe for coaches?) so radiant is 2-6 and dire is 7-11.
+For bot vs. bot match to work, the example script need to be modified. Open hero_selection.lua and you can see the script tries to select 0-4 for radiant and 5-9 for dire. However, this is only true if you are in the game. For bot vs. bot match, 0-1 is reserved so radiant is 2-6 and dire is 7-11.
 
 Create a lobby (Play Dota -> Create Lobby) and edit lobby settings. Choose Local Dev Script for Radiant and choose any difficulty except none. Also tick Enable Cheats.
 
