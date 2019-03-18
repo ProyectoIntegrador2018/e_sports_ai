@@ -1,0 +1,21 @@
+Variables:
+
+skillname:IsFullyCastable()
+skillname: GetLevel()
+GetHealth()
+GetMana()
+npcBot:GetMaxMana()
+npcBot:GetMana()/npcBot:GetMaxMana()>0.50
+npcBot:GetGold()
+DotaTime()
+npcBot:GetAbilityPoints()
+Utility.IsItemAvailable("item_aether_lens")
+GetUnitToUnitDistance(npcBot.Target,npcBot)
+ability:GetCastRange()
+npcBot:IsUsingAbility()
+npcBot:IsChanneling()
+npcBot.IsAttacking
+npcBot:GetHealth()/npcBot:GetMaxHealth()
+creep,chealth=Utility.GetWeakestCreep(ability:GetCastRange());
+ability:GetLevel()
+npcBot:GetActiveMode()
