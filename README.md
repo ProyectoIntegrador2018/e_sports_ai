@@ -1,6 +1,6 @@
-# Project Name
+# DOTA 2 E-sport AI 
 
-E-Sports with AI
+The objective of the project is to create an intelligent bot that plays the game DOTA 2 
 
 ## Table of contents
 
@@ -43,27 +43,36 @@ Team: Jan - May 2019
 
 You should ask for access to this tools if you don't have it already:
 
-* [Github repo](https://github.com/)
-* [Backlog]()
-* [Heroku](https://crowdfront-staging.herokuapp.com/)
-* [Documentation](https://drive.com)
+* [Github repo](https://github.com/ProyectoIntegrador2018/e_sports_ai)
+* [Backlog](https://github.com/ProyectoIntegrador2018/e_sports_ai/projects/2)
+* [Documentation](https://github.com/ProyectoIntegrador2018/e_sports_ai/tree/master/Documents)
 
 ## Development
 
 ### Setup the project
+First of all downlad [steam](https://github.com/ProyectoIntegrador2018/e_sports_ai)
+Then inside steam go to the store tab search for Dota 2 and download it. 
 
---- WIP ---
+Subscribe to this [bot on the workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=837040016)
+
+Go to this path on your computer  Steam\SteamApps\workshop\content\570\837040016. Change all the files with our files on [bot](https://github.com/ProyectoIntegrador2018/e_sports_ai/tree/master/Bot)
+
+Create a lobby. 
+- Change the server to Local Host or Valve Dedicated Server closest to your region.
+- Check Fill empty slot with bot checkbox.
+- From the Workshop Script List choose  script name BOT EXPERIMENT Credit:FURIOUSPUPPY 
+- Click OK and then start the game
+- Select the 1 vs 1 solo mid  mode 
 
 
 
 ### Stop the project
 
---- WIP ---
+ALT + F4
 
 
 ### Debugging
-
---- WIP ---
+The bot must print in game chat the action he is making
 
 ### Running-specs
 Dota 2 Minimun Requirements
@@ -78,5 +87,4 @@ Storage: 15 GB available space
 Sound Card: DirectX Compatible
 
 ### Checking code for potential issues
-
---- WIP ---
+The bot must send a message to console on the begging of the script to check if it's running correctly 
