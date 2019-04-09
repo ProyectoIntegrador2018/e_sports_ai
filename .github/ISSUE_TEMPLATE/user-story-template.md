@@ -1,6 +1,6 @@
 ---
-name: tarreaTecnicas-template
-about: 'tecnical work template '
+name: User-Story-template
+about: 'This template will be used to create a new user story '
 title: ''
 labels: ''
 assignees: ''
@@ -9,10 +9,10 @@ assignees: ''
 
 Header|2nds
 ---|---
-name| Tareas tecnicas template
+name| User story template
 about| Description of the interaction that the user has with a certain functionality of the application.
-title| Tareas tecnicas
-labels|Tareas tecnicas
+title| HISTORIA USUARIO
+labels| HISTORIA USUARIO
 assignees| 
 
 
