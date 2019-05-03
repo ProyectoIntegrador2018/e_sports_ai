@@ -10,7 +10,7 @@ local skills  = ItemGrid.FillSkillTable(zeusNPC, ItemGrid.GetSlotPattern());
 -- This is the suggested item build for Zeus
 X["items"] = { 
 	"item_magic_wand",
-	"item_arcane_boots",
+	"item_power_treads",
 	"item_pipe",
 	"item_veil_of_discord",
 	"item_cyclone",

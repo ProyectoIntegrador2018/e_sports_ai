@@ -1,5 +1,4 @@
 -- This script contains functions used to determine map and enemy awareness
-
 local U = {};
 
 local RB = Vector(-7174.000000, -6671.00000,  0.000000)
@@ -20,19 +19,17 @@ local listBoots = {
 	['item_travel_boots_2'] = 100
 }
 
-local modifier = {
+local firstModifier = {
 	"modifier_winter_wyvern_winters_curse",
 	"modifier_winter_wyvern_winters_curse_aura",
 	"modifier_fountain_glyph",
-	"modifier_necrolyte_reapers_scythe"
+	"modifier_necrolyte_reapers_scythe",
 }
 
 local secondModifier = {
 	"modifier_dazzle_shallow_grave",
 	"modifier_oracle_false_promise_timer",
 	"modifier_abaddon_borrowed_time",
---	"modifier_item_blade_mail_reflect"
-
 }
 
 -- Saves the hero abilities in abilities[] array
@@ -149,23 +146,15 @@ function U.GetProperTarget(bot)
 	return target;
 end
 
-	local allies = {};
-	for i,id in pairs(GetTeamPlayers(GetTeam())) do
-		local member = GetTeamMember(i);
-		if member ~= nil and member:IsAlive() and GetUnitToLocationDistance(member, vLoc) <= nRadius then
-			table.insert(allies, member);
-		end
-	end
-	return allies;
-end
-
+-- Returns the ultimate ability
+function U.GetUltimateAbility(bot)
 	--print(tostring(bot:GetAbilityInSlot(5):GetName()))
 	return bot:GetAbilityInSlot(5);
 end
+
 -- Returns wheter the bot is retreating
 function U.IsRetreating(npcBot)
-	return ( npcBot:GetActiveMode() == BOT_MODE_RETREAT and npcBot:GetActiveModeDesire() > BOT_MODE_DESIRE_MODERATE  )
---	         and (npcBot:DistanceFromFountain() > 0 or (npcBot:DistanceFromFountain() < 300 and U.GetNumEnemyAroundMe(npcBot) > 0)) ) 
+	return ( npcBot:GetActiveMode() == BOT_MODE_RETREAT and npcBot:GetActiveModeDesire() > BOT_MODE_DESIRE_MODERATE  ) 
 		  or ( npcBot:GetActiveMode() == BOT_MODE_EVASIVE_MANEUVERS and npcBot:WasRecentlyDamagedByAnyHero(3.0) ) 
 		  or ( npcBot:HasModifier('modifier_bloodseeker_rupture') and npcBot:WasRecentlyDamagedByAnyHero(2.0) )
 end
@@ -213,7 +202,7 @@ end
 
 -- Returns wheter magic can be casted on target
 function U.CanCastOnMagicImmune(npcTarget)
-	return npcTarget:CanBeSeen() and not npcTarget:IsInvulnerable() and not U.IsSuspiciousIllusion(npcTarget) and not U.HasForbiddenModifier(npcTarget) and not U.IsHumanPlayerCanKill(npcTarget);
+	return npcTarget:CanBeSeen() and not npcTarget:IsInvulnerable() and not U.IsSuspiciousIllusion(npcTarget) and not U.IsHumanPlayerCanKill(npcTarget);
 end
 
 -- Returns wheter magic can be casted on non immune to magic target
@@ -221,35 +210,12 @@ function U.CanCastOnNonMagicImmune(npcTarget)
 	return npcTarget:CanBeSeen() 
 	       and not npcTarget:IsMagicImmune() 
 		   and not npcTarget:IsInvulnerable() 
-		   and not U.IsSuspiciousIllusion(npcTarget) 
-		   and not U.HasForbiddenModifier(npcTarget) 
-		   and not U.IsHumanPlayerCanKill(npcTarget);
+		   and not U.IsSuspiciousIllusion(npcTarget);
 end
 
+-- Returns weter the dmg will kill the target
+function U.CanKillTarget(npcTarget, dmg, dmgType)
 	return npcTarget:GetActualIncomingDamage( dmg, dmgType ) >= npcTarget:GetHealth(); 
-end
-
--- Returns wether the modifier is forbidden on target (support abilities)
-function U.HasForbiddenModifier(npcTarget)
-	for _,mod in pairs(modifier)
-	do
-		if npcTarget:HasModifier(mod) then
-			return true
-		end	
-	end
-
-	local enemies = GetBot():GetNearbyHeroes(800,true,BOT_MODE_NONE);
-	if #enemies >= 2
-	then
-		for _,mod in pairs(secondModifier)
-		do
-			if npcTarget:HasModifier(mod) then
-				return true
-			end	
-		end
-	end
-	
-	return false;
 end
 
 -- Returns wheter the target is disabled
@@ -306,15 +272,8 @@ function U.IsPushing(npcBot)
 		   mode == BOT_MODE_PUSH_TOWER_BOT 
 end
 
-	local incProj = npcBot:GetIncomingTrackingProjectiles()
-	for _,p in pairs(incProj)
-	do
-		if GetUnitToLocationDistance(npcBot, p.location) < range and not p.is_attack and p.is_dodgeable then
-			return true;
-		end
-	end
-	return false;
-end
+-- Returns the correct location of target (for skill shots)
+function U.GetCorrectLoc(target, delay)
 	if delay == 0 then
 		return target:GetLocation();
 	elseif target:GetMovementDirectionStability() < 0.9 
@@ -326,6 +285,9 @@ end
 		return target:GetExtrapolatedLocation(delay);	
 	end
 end
+
+-- Returns the enemy fountain
+function U.GetEnemyFountain()
 	local Team = GetTeam();
 	if Team == TEAM_DIRE then
 		return RB;
@@ -333,6 +295,9 @@ end
 		return DB;
 	end
 end
+
+-- Returns wheter the unit is in the player's table
+function U.IsExistInTable(u, tUnit)
 	for _,t in pairs(tUnit) do
 		if u:GetUnitName() == t:GetUnitName() then
 			return true;
@@ -354,6 +319,8 @@ function U.CountInvUnits(pierceImmune, units)
 	return nUnits;
 end
 
+-- Returns the fountain object (your team's fountain)
+function U.GetOurFountain()
 	local Team = GetTeam();
 	if Team == TEAM_DIRE then
 		return DB;
@@ -361,6 +328,9 @@ end
 		return RB;
 	end
 end
+
+-- Returns the ally creeps near a location
+function U.GetAllyCreepNearLoc(vLoc, nRadius, npcBot)
 	local AllyCreepsAll = npcBot:GetNearbyCreeps(1600, false);
 	local AllyCreeps = { };
 	for _,creep in pairs(AllyCreepsAll) 
@@ -382,6 +352,8 @@ function U.GetUnitTowardDistanceLocation(npcBot,towardTarget,nDistance)
 	return npcBotLocation + nDistance * tempVector;
 end
 
+-- Returns units (distance units) of location at distance from bot
+function U.GetLocationTowardDistanceLocation(npcBot,towardLocation,nDistance)
     local npcBotLocation = npcBot:GetLocation();
     local tempVector = (towardLocation - npcBotLocation) / GetUnitToLocationDistance(npcBot,towardLocation);
 	return npcBotLocation + nDistance * tempVector;
@@ -431,6 +403,8 @@ function U.GetCastLocation(npcBot,npcTarget,nCastRange,nRadius)
 	return nil;
 end
 
+-- Returns wheter you have the item in your inventory
+function U.IsItemAvailable(item_name)
 	local bot = GetBot();
     local slot = bot:FindItemSlot(item_name);
 	
@@ -457,12 +431,13 @@ function U.IsValid(nTarget)
 	return nTarget ~= nil and nTarget:IsAlive() and nTarget:CanBeSeen(); 
 end
 
-	if not bot:IsAlive() then return false end
-	
+-- Returns wheter a target is or isn't running
+function U.IsRunning(bot)
+	if not bot:IsAlive() then return false end	
 	return bot:GetAnimActivity() == ACTIVITY_RUN ;
-
-en
-
+end
+-- Returns the attackeble weakest unit in range
+function U.GetAttackableWeakestUnit(bHero, bEnemy, nRadius, bot)
 	local units = {};
 	local weakest = nil;
 	local weakestHP = 10000;
@@ -474,7 +449,6 @@ en
 	
 	for _,unit in pairs(units) do
 		if  U.IsValid(unit)
-			and not U.HasForbiddenModifier(unit)
 			and not unit:IsAttackImmune()
 			and not unit:IsInvulnerable()
 			and unit:GetHealth() < weakestHP 
@@ -486,3 +460,25 @@ en
 	return weakest;
 end
 
+-- Returns wheter the bot is stuck
+function U.IsStuck(npcBot)
+	if npcBot.stuckLoc ~= nil and npcBot.stuckTime ~= nil then 
+		local EAd = GetUnitToUnitDistance(npcBot, GetAncient(GetOpposingTeam()));
+		if DotaTime() > npcBot.stuckTime + 5.0 and GetUnitToLocationDistance(npcBot, npcBot.stuckLoc) < 25  
+           and npcBot:GetCurrentActionType() == BOT_ACTION_TYPE_MOVE_TO and EAd > 2200		
+		then
+			print(npcBot:GetUnitName().." is stuck")
+			--DebugPause();
+			return true;
+		end
+	end
+	return false
+end
+
+function U.GetHPR(bot)
+
+	return bot:GetHealth()/bot:GetMaxHealth();
+
+end
+
+return U;

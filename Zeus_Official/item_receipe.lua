@@ -13,10 +13,7 @@ ItemModule['earlyGameItem'] = {
 	 "item_bracer",
 	 "item_wraith_band",
 	 "item_null_talisman",
-	 "item_magic_wand",
-	 "item_infused_raindrop",
-	 "item_bottle",  
-	 "item_soul_ring",  
+	 "item_magic_wand",  
 	 "item_dust",
 	 "item_ancient_janggo"
 }
@@ -60,7 +57,6 @@ ItemModule["basic_items"] = {
 	"item_flask";
 	"item_helm_of_iron_will";
 	"item_hyperstone";
-	"item_infused_raindrop";
 	"item_branches";
 	"item_javelin";
 	"item_magic_stick";
@@ -172,6 +168,22 @@ function ItemModule.IsItemInHero(item_name)
 	end
 end
 
+function ItemModule.GetBasicItems( ... )
+    local basicItemTable = {}  
+    for i,v in pairs(...) do    
+        if ItemModule[v] ~= nil      
+		   and ItemModule.IsItemInHero(v) == false 
+		then                                        
+            for _,w in pairs(ItemModule.GetBasicItems(ItemModule[v])) do  
+				basicItemTable[#basicItemTable+1] = w;  
+            end
+        elseif ItemModule[v] == nil and ItemModule.IsItemInHero(v) == false then
+			basicItemTable[#basicItemTable+1] = v;
+        end
+    end
+    return basicItemTable
+end
+
 -- Amount of empty slots in inventory
 function ItemModule.GetEmptyInventoryAmount(bot)
 	local amount = 0;
@@ -226,6 +238,11 @@ function ItemModule.UpdateBuyBootStatus(bot)
 		end
 	end
 	return bootsSlot >= 0;
+end
+
+-- returns the normal item name (advanced items and game modes only)
+function ItemModule.NormItemName(item_name)
+	return item_name;
 end
 
 return ItemModule
