@@ -1,5 +1,7 @@
 # DOTA 2 E-sport AI 
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/0738b7fdda3a4e0f92ba2cf89c6b7397)](https://app.codacy.com/app/Cupovboy/e_sports_ai?utm_source=github.com&utm_medium=referral&utm_content=ProyectoIntegrador2018/e_sports_ai&utm_campaign=Badge_Grade_Dashboard)
+
 The objective of the project is to create an intelligent bot that plays the game DOTA 2 
 
 ## Table of contents
