@@ -1,69 +1,57 @@
-Utility = require( GetScriptDirectory().."/Utility");
-
-local Abilities={
-"zuus_arc_lightning",
-"zuus_lightning_bolt",
-"zuus_static_field",
-"zuus_thundergods_wrath"
-};
+local map_awareness = require( GetScriptDirectory().."/map_awareness");
+local idea = require(GetScriptDirectory() .. "/bayesian_network");
 
 local EnemyLaneCreeps = {};
 local AllyLaneCreeps = {};
 
+local npcBot = GetBot();
+
+local abilities = map_awareness.InitiateAbilities(npcBot, {0,1,3,5});
+
 function  OnStart()
-	print("Farming...");
+	print("Farming")
 end
 
 function OnEnd()
 end
 
 function GetDesire()
-	local npcBot=GetBot();
-	local creep=nil;
-	local chealth=10000;
-	local ability=npcBot:GetAbilityByName(Abilities[1]);
+	return realDesire();
+end
 
+function Think()
+	local npcBot = GetBot();
+  
+  local qManaCost  = abilities[1]:GetManaCost();
+  local qCastRange = abilities[1]:GetCastRange();
+	local qRadius = abilities[1]:GetSpecialValueInt( "radius" );
 	
-	--we fill the values of the varibales based on which creep is the weakest in range of the bot
-	creep,chealth=Utility.GetWeakestCreep(400);
-
-	--we get the numbers of creeps of the enemy
-	EnemyLaneCreeps = npcBot:GetNearbyLaneCreeps(400, true);
-
-	--we get the total numbers of creeps
-	AllyLaneCreeps = npcBot:GetNearbyLaneCreeps(400, false);
-
-	--we check if there are creeps, if the weakest creep has less than 25% of life and the bot has enought heath and the bot has more creeps than the enemy
-	if creep~=nil and (chealth < creep:GetMaxHealth()*.25) and (npcBot:GetHealth() > npcBot:GetMaxHealth()*.4) and (#AllyLaneCreeps - #EnemyLaneCreeps >-1)then
-		return 0.5;
-	else
-		return 0.0;
+  local target = map_awareness.GetVulnerableWeakestUnit(false,true,qCastRange,npcBot);
+  
+	--if there is a creep in range
+	if target~=nil then
+		--if the creep is in range of the skill and the bot has the mana to cast the skill and the bot has the ability
+		if map_awareness.IsInRange(target,npcBot,qCastRange) 
+      and not map_awareness.CantUseAbility(npcBot) 
+      and map_awareness.CanSpamSpell(npcBot, qManaCost) then
+			--use the skill on the creep
+			npcBot:Action_UseAbilityOnEntity(abilities[1],target);
+		else
+			--if we cannot use the skill we use normal attack
+			npcBot:Action_AttackUnit(target, false);
+		end
 	end
 
 end
 
-function Think()
-	local npcBot=GetBot();
-	local creep=nil;
-	local chealth=10000;
-	local ability=npcBot:GetAbilityByName(Abilities[1]);
-	
-	--we get the ability damage
-	local damage=ability:GetAbilityDamage();
-	
-	--we fill the values of the varibales based on which creep is the weakest in range of the bot
-	creep,chealth=Utility.GetWeakestCreep(ability:GetCastRange());
-	--if there is a creep in range
-	if creep~=nil then
-		--if the creep is in range of the skill and the bot has the mana to cast the skill and the bot has the ability
-		if Utility.GetDistance(creep:GetLocation(),npcBot:GetLocation())>npcBot:GetAttackRange()+150 and npcBot:GetMana()/npcBot:GetMaxMana()>0.65 and  ability:IsFullyCastable() then
-			--use the skill on the creep
-			npcBot:Action_UseAbilityOnEntity(ability,creep);
-			return;
-		else
-			--if we cannot use the skill we use normal attack
-			npcBot:Action_AttackUnit(creep, false);
-		end
-	end
-
+-- For some reason dota modifies the ACTIVE_MODE_DESIRE so this will set the desire to a reaal desire
+function realDesire()
+  local retreatDesire = idea.calculateRetreatDesire();
+  local laningDesire = idea.calculateLaningDesire();
+  local farmDesire = idea.calculateFarmDesire();
+  local attackDesire = idea.calculateAttackDesire();
+  
+  if farmDesire > laningDesire and farmDesire > retreatDesire and farmDesire > attackDesire then return 1
+    else return farmDesire end
+  
 end

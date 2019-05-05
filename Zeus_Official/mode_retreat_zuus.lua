@@ -1,33 +1,32 @@
+local idea = require(GetScriptDirectory() .. "/bayesian_network");
+local map_awareness = require(GetScriptDirectory() .. "/map_awareness");
 
 local CurLane = LANE_MID;
+local npcBot = GetBot();
 
 function  OnStart()
-	print("Back TEC!")
+  print("Retreat");
 end
 
-local function StayBack()
-	local npcBot=GetBot();
-	
-	local LaneFront=GetLaneFrontAmount(GetTeam(),CurLane,true);
-	local LaneEnemyFront=GetLaneFrontAmount(GetTeam(),CurLane,false);
-	
-	local BackPos=GetLocationAlongLane(CurLane,Min(LaneFront-0.05,LaneEnemyFront-0.05)) + RandomVector(200);
-	npcBot:Action_MoveToLocation(BackPos);
-end
-
-
-function OnEnd()
-end
--- dara un numero entre 0 y 1 que determina que tanto quieres hacer esta acion 
 function GetDesire()
-	local npcBot=GetBot();
-	local EyeRange=1200;
-	if(npcBot:GetHealth()>npcBot:GetMaxHealth()*.3) then 
-		return 0
-	end 
-     return .9;
+	return realDesire();
 end
 
 function Think()
-	StayBack();
+  npcBot:Action_MoveToLocation(map_awareness.GetTeamFountain());
+end
+
+function OnEnd()
+end
+
+-- For some reason dota modifies the ACTIVE_MODE_DESIRE so this will set the desire to a reaal desire
+function realDesire()
+  local retreatDesire = idea.calculateRetreatDesire();
+  local laningDesire = idea.calculateLaningDesire();
+  local farmDesire = idea.calculateFarmDesire();
+  local attackDesire = idea.calculateAttackDesire();
+  
+  if retreatDesire > laningDesire and retreatDesire > farmDesire and retreatDesire > attackDesire then return 1
+    else return retreatDesire end
+  
 end

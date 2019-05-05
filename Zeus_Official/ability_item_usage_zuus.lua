@@ -1,21 +1,21 @@
-
 if GetBot():IsInvulnerable() or not GetBot():IsHero() or not string.find(GetBot():GetUnitName(), "hero") or  GetBot():IsIllusion() then
 	return;
 end
 
-local mutil = require(GetScriptDirectory() ..  "/awareness");
-levelUpThink = require(GetScriptDirectory() .. "/levelUpThink");
+local map_awareness = require(GetScriptDirectory() ..  "/map_awareness");
+local item_usage_think = require(GetScriptDirectory() .. "/item_usage_think");
+local level_up_think = require(GetScriptDirectory() .. "/levelUpThink");
 
 function AbilityLevelUpThink()  
-	 levelUpThink.AbilityLevelUpThink();
+	 level_up_think.AbilityLevelUpThink();
 end
 
 function BuybackUsageThink()
-	
+	-- No buy back
 end
 
 function CourierUsageThink()
-	
+	-- No courier usage
 end
 
 local bot = GetBot();
@@ -32,11 +32,14 @@ local castRDesire = 0;
 local nComboMana,nManaPercentage,nHealthPercentage,nAllEnemyHeroes;
 
 function AbilityUsageThink()
-	if #abilities == 0 then abilities = mutil.InitiateAbilities(bot, {0,1,3,5}) end
+  
+  item_usage_think.ItemUsageThink();
+  
+	if #abilities == 0 then abilities = map_awareness.InitiateAbilities(bot, {0,1,3,5}) end
 	
-	if mutil.CantUseAbility(bot) then return end
+	if map_awareness.CantUseAbility(bot) then return end
 	
-	nComboMana = 220 
+	nComboMana = 220;
 	nManaPercentage = npcBot:GetMana()/npcBot:GetMaxMana();
 	nHealthPercentage = npcBot:GetHealth()/npcBot:GetMaxHealth();
 	
@@ -89,7 +92,7 @@ function AbilityUsageThink()
 end
 
 function ConsiderQ()
-	if not mutil.CanBeCast(abilities[1]) then
+	if not map_awareness.CanBeCast(abilities[1]) then
 		return BOT_ACTION_DESIRE_NONE, nil;
 	end
 	
@@ -101,44 +104,44 @@ function ConsiderQ()
 	
 	for _,enemy in pairs(nEnemyHeroesInSkillRange)
 	do
-		if mutil.IsValidTarget(enemy)
-			and mutil.CanCastOnNonMagicImmune(enemy)
-			and mutil.GetHPR(enemy) <= 0.2
+		if map_awareness.IsValidTarget(enemy)
+			and map_awareness.CanCastOnNonMagicImmune(enemy)
+			and map_awareness.GetHPR(enemy) <= 0.2
 		then
 			return BOT_ACTION_DESIRE_HIGH, enemy;
 		end
 	end
 	
 	if bot:GetActiveMode() == BOT_MODE_LANING then
-		local target = mutil.GetSpellKillTarget(bot, false, nCastRange, abilities[1]:GetAbilityDamage(), DAMAGE_TYPE_MAGICAL);
-		if target ~= nil and mutil.IsEnemyTargetMyTarget(bot, target) then
+		local target = map_awareness.GetSpellKillTarget(bot, false, nCastRange, abilities[1]:GetAbilityDamage(), DAMAGE_TYPE_MAGICAL);
+		if target ~= nil and map_awareness.IsEnemyTargetMyTarget(bot, target) then
 			return BOT_ACTION_DESIRE_HIGH, target;
 		end
 	end
 	
-	if mutil.IsRetreating(bot) and bot:WasRecentlyDamagedByAnyHero(2.0)
+	if map_awareness.IsRetreating(bot) and bot:WasRecentlyDamagedByAnyHero(2.0)
 	then
-		local target = mutil.GetVulnerableWeakestUnit(true, true, nCastRange, bot);
+		local target = map_awareness.GetVulnerableWeakestUnit(true, true, nCastRange, bot);
 		if target ~= nil and bot:IsFacingLocation(target:GetLocation(),45) then
 			return BOT_ACTION_DESIRE_HIGH, target;
 		end
 	end
 	
-	if ( mutil.IsPushing(bot) or mutil.IsDefending(bot) ) and mutil.CanSpamSpell(bot, manaCost)
+	if ( map_awareness.IsPushing(bot) or map_awareness.IsDefending(bot) ) and map_awareness.CanSpamSpell(bot, manaCost)
 	then
 		local locationAoE = bot:FindAoELocation( true, false, bot:GetLocation(), nCastRange, nRadius, 0, 0 );
 		if ( locationAoE.count >= 3 ) then
-			local target = mutil.GetVulnerableUnitNearLoc(false, true, nCastRange, nRadius, locationAoE.targetloc, bot);
+			local target = map_awareness.GetVulnerableUnitNearLoc(false, true, nCastRange, nRadius, locationAoE.targetloc, bot);
 			if target ~= nil then
 				return BOT_ACTION_DESIRE_HIGH, target;
 			end
 		end
 	end
 	
-	if mutil.IsGoingOnSomeone(bot)
+	if map_awareness.IsGoingOnSomeone(bot)
 	then
-		local target = mutil.GetProperTarget(bot);
-		if mutil.IsValidTarget(target) and mutil.CanCastOnNonMagicImmune(target) and mutil.IsInRange(target, bot, nCastRange)
+		local target = map_awareness.GetProperTarget(bot);
+		if map_awareness.IsValidTarget(target) and map_awareness.CanCastOnNonMagicImmune(target) and map_awareness.IsInRange(target, bot, nCastRange)
 		then
 			return BOT_ACTION_DESIRE_HIGH, target;
 		end
@@ -148,7 +151,7 @@ function ConsiderQ()
 end
 
 function ConsiderW()
-	if not mutil.CanBeCast(abilities[2]) then
+	if not map_awareness.CanBeCast(abilities[2]) then
 		return BOT_ACTION_DESIRE_NONE, nil;
 	end
 	
@@ -159,19 +162,19 @@ function ConsiderW()
 	
 	local targetRanged = GetRanged(bot,nCastRange);	
 	
-	if mutil.IsRetreating(bot) and bot:WasRecentlyDamagedByAnyHero(2.0)
+	if map_awareness.IsRetreating(bot) and bot:WasRecentlyDamagedByAnyHero(2.0)
 	then
-		local target = mutil.GetVulnerableWeakestUnit(true, true, nCastRange, bot);
+		local target = map_awareness.GetVulnerableWeakestUnit(true, true, nCastRange, bot);
 		if target ~= nil then
 			return BOT_ACTION_DESIRE_HIGH, target;
 		end
 	end
 	
 	
-	if mutil.IsGoingOnSomeone(bot)
+	if map_awareness.IsGoingOnSomeone(bot)
 	then
-		local target = mutil.GetProperTarget(bot);
-		if mutil.IsValidTarget(target) and mutil.CanCastOnNonMagicImmune(target) and mutil.IsInRange(target, bot, nCastRange)
+		local target = map_awareness.GetProperTarget(bot);
+		if map_awareness.IsValidTarget(target) and map_awareness.CanCastOnNonMagicImmune(target) and map_awareness.IsInRange(target, bot, nCastRange)
 		then
 			return BOT_ACTION_DESIRE_HIGH, target;
 		end
@@ -188,7 +191,7 @@ function ConsiderW()
 end
 
 function ConsiderWW()
-	if not mutil.CanBeCast(abilities[2]) then
+	if not map_awareness.CanBeCast(abilities[2]) then
 		return BOT_ACTION_DESIRE_NONE, nil;
 	end
 	
@@ -199,14 +202,14 @@ function ConsiderWW()
 	local nRadius   = 325;
 	
 	local nEnemyHeroesInSkillRange  = bot:GetNearbyHeroes(nCastRange + nRadius,true,BOT_MODE_NONE);
-	local nWeakestEnemyHeroInSkillRange = mutil.GetVulnerableWeakestUnit(true, true, nCastRange + nRadius, bot);
+	local nWeakestEnemyHeroInSkillRange = map_awareness.GetVulnerableWeakestUnit(true, true, nCastRange + nRadius, bot);
 	local nCanKillHeroLocationAoE = npcBot:FindAoELocation( true, true, npcBot:GetLocation(), nCastRange, nRadius , 0, 0.7*nDamage);
 	
 	if nCanKillHeroLocationAoE.count >= 1
 	then
-		if mutil.IsValid(nWeakestEnemyHeroInSkillRange) 
+		if map_awareness.IsValid(nWeakestEnemyHeroInSkillRange) 
 		then
-		    local nTargetLocation = mutil.GetCastLocation(npcBot,nWeakestEnemyHeroInSkillRange,nCastRange,nRadius);
+		    local nTargetLocation = map_awareness.GetCastLocation(npcBot,nWeakestEnemyHeroInSkillRange,nCastRange,nRadius);
 			if nTargetLocation ~= nil
 			then
 				return BOT_ACTION_DESIRE_HIGH, nTargetLocation;
@@ -216,11 +219,11 @@ function ConsiderWW()
 	
 	for _,enemy in pairs(nEnemyHeroesInSkillRange)
 	do
-		if mutil.IsValid(enemy)
+		if map_awareness.IsValid(enemy)
 			and enemy:IsChanneling()
 			and not enemy:IsMagicImmune()
 		then
-			local nTargetLocation = mutil.GetCastLocation(npcBot,enemy,nCastRange,nRadius);
+			local nTargetLocation = map_awareness.GetCastLocation(npcBot,enemy,nCastRange,nRadius);
 			if nTargetLocation ~= nil
 			then
 				return BOT_ACTION_DESIRE_HIGH, nTargetLocation;
@@ -242,16 +245,16 @@ function ConsiderWW()
 	
 	if bot:GetActiveMode() ~= BOT_MODE_RETREAT and not bot:IsInvisible()
 	then
-		local npcEnemy = mutil.GetProperTarget(bot)
-		if  mutil.IsValidTarget(npcEnemy)
-            and mutil.CanCastOnNonMagicImmune(npcEnemy) 
+		local npcEnemy = map_awareness.GetProperTarget(bot)
+		if  map_awareness.IsValidTarget(npcEnemy)
+            and map_awareness.CanCastOnNonMagicImmune(npcEnemy) 
 			and GetUnitToUnitDistance(npcEnemy,bot) <= nRadius + nCastRange		
 		then
 			
 			if nManaPercentage > 0.65 
 			   or npcBot:GetMana() > nComboMana *2
 			then
-				local nTargetLocation = mutil.GetCastLocation(npcBot,npcEnemy,nCastRange,nRadius);
+				local nTargetLocation = map_awareness.GetCastLocation(npcBot,npcEnemy,nCastRange,nRadius);
 				if nTargetLocation ~= nil
 				then
 					return BOT_ACTION_DESIRE_HIGH, nTargetLocation;
@@ -260,7 +263,7 @@ function ConsiderWW()
 			
 			if npcEnemy:GetHealth()/npcEnemy:GetMaxHealth() < 0.45            
 		    then
-			    local nTargetLocation = mutil.GetCastLocation(npcBot,npcEnemy,nCastRange,nRadius);
+			    local nTargetLocation = map_awareness.GetCastLocation(npcBot,npcEnemy,nCastRange,nRadius);
 				if nTargetLocation ~= nil
 				then
 					return BOT_ACTION_DESIRE_HIGH, nTargetLocation;
@@ -270,11 +273,11 @@ function ConsiderWW()
 		end	
 		
 		local npcEnemy = nWeakestEnemyHeroInSkillRange;
-		if  mutil.IsValid(npcEnemy) and DotaTime() > 0
+		if  map_awareness.IsValid(npcEnemy) and DotaTime() > 0
 			and (npcEnemy:GetHealth()/npcEnemy:GetMaxHealth() < 0.4 or npcBot:GetMana() > nComboMana * 2.3)
 			and GetUnitToUnitDistance(npcEnemy,npcBot) <= nRadius + nCastRange
 		then
-			local nTargetLocation = mutil.GetCastLocation(npcBot,npcEnemy,nCastRange,nRadius);
+			local nTargetLocation = map_awareness.GetCastLocation(npcBot,npcEnemy,nCastRange,nRadius);
 			if nTargetLocation ~= nil
 			then
 				return BOT_ACTION_DESIRE_HIGH, nTargetLocation;
@@ -287,7 +290,7 @@ end
 
 
 function ConsiderD()
-	if not mutil.CanBeCast(abilities[3]) or bot:HasScepter() == false or bot:IsInvisible() then
+	if not map_awareness.CanBeCast(abilities[3]) or bot:HasScepter() == false or bot:IsInvisible() then
 		return BOT_ACTION_DESIRE_NONE, nil;
 	end
 	
@@ -295,13 +298,13 @@ function ConsiderD()
 	for i = 1, #numPlayer
 	do
 		local member =  GetTeamMember(i);
-		if mutil.IsValid(member)
-			and mutil.IsGoingOnSomeone(member)
+		if map_awareness.IsValid(member)
+			and map_awareness.IsGoingOnSomeone(member)
 		then
-			local target = mutil.GetProperTarget(member);
-			if mutil.IsValidTarget(target) 
-			   and mutil.IsInRange(member, target, 1200)
-			   and mutil.CanCastOnNonMagicImmune(target)
+			local target = map_awareness.GetProperTarget(member);
+			if map_awareness.IsValidTarget(target) 
+			   and map_awareness.IsInRange(member, target, 1200)
+			   and map_awareness.CanCastOnNonMagicImmune(target)
 			then
 				return BOT_ACTION_DESIRE_HIGH, target:GetExtrapolatedLocation(1.0);
 			end
@@ -312,7 +315,7 @@ function ConsiderD()
 end
 
 function ConsiderR()
-	if not mutil.CanBeCast(abilities[4]) then
+	if not map_awareness.CanBeCast(abilities[4]) then
 		return BOT_ACTION_DESIRE_NONE;
 	end
 	
@@ -323,9 +326,9 @@ function ConsiderR()
 	local nDamageType  = DAMAGE_TYPE_MAGICAL
 	
 	
-	if mutil.IsRetreating(bot) and bot:WasRecentlyDamagedByAnyHero(2.0)
+	if map_awareness.IsRetreating(bot) and bot:WasRecentlyDamagedByAnyHero(2.0)
 	then
-		local target = mutil.GetSpellKillTarget(bot, true, nCastRange, nDamage, nDamageType);
+		local target = map_awareness.GetSpellKillTarget(bot, true, nCastRange, nDamage, nDamageType);
 		if target ~= nil then
 			return BOT_ACTION_DESIRE_HIGH;
 		end
@@ -344,7 +347,7 @@ function ConsiderR()
 	for _,e in pairs (gEnemies) 
 	do
 		if e ~= nil 
-		   and mutil.CanCastOnNonMagicImmune(e) 
+		   and map_awareness.CanCastOnNonMagicImmune(e) 
 		then
 			if e:GetHealth() > 0 and e:GetHealth() <= e:GetActualIncomingDamage(nDamage, nDamageType) 
 			then
@@ -385,9 +388,9 @@ function GetRanged(bot,nRadius)
 		if nTowers[1] ~= nil
 		then
 			local nTowerTarget = nTowers[1]:GetAttackTarget();
-			if mutil.IsValid(nTowerTarget)
+			if map_awareness.IsValid(nTowerTarget)
 				and GetUnitToUnitDistance(nTowerTarget,bot) <= 1400
-				and mutil.IsKeyWordUnitClass("ranged",nTowerTarget)
+				and map_awareness.IsKeyWordUnitClass("ranged",nTowerTarget)
 				and not nTowerTarget:WasRecentlyDamagedByAnyHero(1.0)
 			then
 				return nTowerTarget;
@@ -399,8 +402,8 @@ function GetRanged(bot,nRadius)
 			local nLaneCreeps = bot:GetNearbyLaneCreeps(800,true);
 			for _,creep in pairs(nLaneCreeps)
 			do
-				if mutil.IsValid(creep)
-					and mutil.IsKeyWordUnitClass("ranged",creep)
+				if map_awareness.IsValid(creep)
+					and map_awareness.IsKeyWordUnitClass("ranged",creep)
 					and not creep:WasRecentlyDamagedByAnyHero(1.0)
 				then
 					return creep;
