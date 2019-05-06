@@ -1,3 +1,5 @@
+local bot = GetBot();
+
 function  OnStart()
 end
 
@@ -5,7 +7,7 @@ function OnEnd()
 end
 
 function GetDesire()
-	return 1.0;
+    return 1.0;
 end
 
 function Think()
