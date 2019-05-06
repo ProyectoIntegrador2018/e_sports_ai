@@ -492,3 +492,4 @@ function Awareness.GetHPR(bot)
 end
 
 return Awareness;
+
