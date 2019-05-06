@@ -20,16 +20,16 @@ function GetDesire()
 end
 
 function Think()
-	local npcBot = GetBot();
+  local npcBot = GetBot();
   
   local qManaCost  = abilities[1]:GetManaCost();
   local qCastRange = abilities[1]:GetCastRange();
-	local qRadius = abilities[1]:GetSpecialValueInt( "radius" );
+  local qRadius = abilities[1]:GetSpecialValueInt( "radius" );
 	
   local target = map_awareness.GetVulnerableWeakestUnit(false,true,qCastRange,npcBot);
   
-	--if there is a creep in range
-	if target~=nil then
+	--if there is a creep in range and has less than 20 percent hp
+	if target~=nil and (map_awareness.GetHPR(target)<.2) then
 		--if the creep is in range of the skill and the bot has the mana to cast the skill and the bot has the ability
 		if map_awareness.IsInRange(target,npcBot,qCastRange) 
       and not map_awareness.CantUseAbility(npcBot) 
@@ -41,6 +41,7 @@ function Think()
 			npcBot:Action_AttackUnit(target, false);
 		end
 	end
+	
 
 end
 
