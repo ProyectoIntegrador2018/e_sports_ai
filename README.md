@@ -53,19 +53,12 @@ You should ask for access to this tools if you don't have it already:
 
 ### Setup the project
 First of all downlad [steam](https://github.com/ProyectoIntegrador2018/e_sports_ai)
-Then inside steam go to the store tab search for Dota 2 and download it. 
-
-Subscribe to this [bot on the workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=837040016)
-
-Go to this path on your computer  Steam\SteamApps\workshop\content\570\837040016. Change all the files with our files on [bot](https://github.com/ProyectoIntegrador2018/e_sports_ai/tree/master/Bot)
-
-Create a lobby. 
-- Change the server to Local Host or Valve Dedicated Server closest to your region.
-- Check Fill empty slot with bot checkbox.
-- From the Workshop Script List choose  script name BOT EXPERIMENT Credit:FURIOUSPUPPY 
-- Click OK and then start the game
-- Select the 1 vs 1 solo mid  mode 
-
+Open the steam software on your pc after the installation and login using the account you have previously created
+On steam go to “STORE” located at the top left corner of the window
+Using the search bar look for “Dota 2” and select the first resul
+Scroll down the window and select “Play Game”
+Now the game is downloading. After the download has finished go to “LIBRARY” located beside “STORE” 
+1.	To be able to run the bot in-game save all the bots files in the [your dota 2 installation path]\game\dota\scripts\vscripts\bots file (if you have no bots file in vscripts create one) all .lua files must be on this specific folder
 
 
 ### Stop the project
